@@ -1,0 +1,37 @@
+[root@selinux ~]# systemctl restart nginx.service
+Job for nginx.service failed because the control process exited with error code.
+See "systemctl status nginx.service" and "journalctl -xeu nginx.service" for details.  
+
+ semanage port -a -t http_port_t -p tcp 8050
+Port tcp/8050 already defined, modifying instead
+[root@selinux ~]# semanage port -l | grep http
+http_cache_port_t              tcp      8080, 8118, 8123, 10001-10010
+http_cache_port_t              udp      3130
+http_port_t                    tcp      8050, 80, 81, 443, 488, 8008, 8009, 8443, 9000
+pegasus_http_port_t            tcp      5988
+pegasus_https_port_t           tcp      5989
+[root@selinux ~]# systemctl restart nginx.service
+[root@selinux ~]# systemctl status nginx.service
+● nginx.service - The nginx HTTP and reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; disabled; preset: disabled)
+     Active: active (running) since Sat 2024-06-29 10:33:44 UTC; 6s ago
+    Process: 10747 ExecStartPre=/usr/bin/rm -f /run/nginx.pid (code=exited, status=0/SUCCESS)
+    Process: 10748 ExecStartPre=/usr/sbin/nginx -t (code=exited, status=0/SUCCESS)
+    Process: 10749 ExecStart=/usr/sbin/nginx (code=exited, status=0/SUCCESS)
+   Main PID: 10750 (nginx)
+      Tasks: 3 (limit: 24732)
+     Memory: 2.8M
+        CPU: 64ms
+     CGroup: /system.slice/nginx.service
+             ├─10750 "nginx: master process /usr/sbin/nginx"
+             ├─10751 "nginx: worker process"
+             └─10752 "nginx: worker process"
+
+Jun 29 10:33:44 selinux.local systemd[1]: Starting The nginx HTTP and reverse proxy server...
+Jun 29 10:33:44 selinux.local nginx[10748]: nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+Jun 29 10:33:44 selinux.local nginx[10748]: nginx: configuration file /etc/nginx/nginx.conf test is successful
+Jun 29 10:33:44 selinux.local systemd[1]: Started The nginx HTTP and reverse proxy server.
+[root@selinux ~]# semanage port -d -t http_port_t -p tcp 8050
+[root@selinux ~]# systemctl restart nginx.service
+Job for nginx.service failed because the control process exited with error code.
+See "systemctl status nginx.service" and "journalctl -xeu nginx.service" for details.
